@@ -13,7 +13,7 @@ else:
     exit()
 
 class InstagramInfo():
-    DRIVER_PATH = '../tools/chromedriver'
+    DRIVER_PATH = 'tools/chromedriver'
 
     def __init__(self, headless=False):
         self.total_followers = 0
