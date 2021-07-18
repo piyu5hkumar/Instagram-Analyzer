@@ -6,11 +6,12 @@ from pathlib import Path
 import os
 import dotenv
 
-dotenv_file = os.path.join(Path(__file__).resolve().parent,'.env')
+dotenv_file = os.path.join(Path(__file__).resolve().parent, '.env')
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
 else:
     exit()
+
 
 class InstagramInfo():
     DRIVER_PATH = 'tools/chromedriver'
@@ -81,88 +82,44 @@ class InstagramInfo():
     def followings(self):
         self.all_followings = {}
 
-        self.driver.get('https://www.instagram.com/piyu5hkumar/')
-        sleep(2)
-
-        self.driver.find_element_by_xpath(
-            '//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a').click()
-        sleep(1.5)
-
-        self.driver.execute_script('''
-            followings = document.getElementsByClassName('isgrP')[0];
-        ''')
-
-        previous_height = self.driver.execute_script('''
-            return followings.scrollHeight;
-        ''')
+        self.driver.get('https://www.instagram.com/accounts/access_tool/accounts_you_follow')
 
         while True:
-            self.driver.execute_script('''
-                followings.scrollTo(0, followings.scrollHeight);
-            ''')
-            sleep(1)
-            new_height = self.driver.execute_script('''
-                return followings.scrollHeight;
-            ''')
-            if new_height == previous_height:
+            try:
+                self.driver.find_element_by_xpath(
+                    '//*[@id="react-root"]/section/main/div/article/main/button').click()
+                sleep(0.5)
+            except:
                 break
-            previous_height = new_height
 
-        sleep(1)
-        li = self.driver.find_element_by_class_name('PZuss')
+        divs = self.driver.find_elements_by_class_name('-utLf')
 
-        items = li.find_elements_by_tag_name('li')
-
-        for li_item in items:
-            name_div = li_item.find_elements_by_tag_name('a')
-            if len(name_div) > 1:
-                name = name_div[1].get_attribute('innerHTML')
-                if name not in self.all_followings:
-                    self.all_followings[name] = True
+        for div in divs:
+            name = div.get_attribute('innerHTML')
+            if name not in self.all_followings:
+                self.all_followings[name] = True
 
         self.total_followings = len(self.all_followings)
 
     def followers(self):
         self.all_followers = {}
 
-        self.driver.get('https://www.instagram.com/piyu5hkumar/')
-        sleep(2)
+        self.driver.get('https://www.instagram.com/accounts/access_tool/accounts_following_you')
 
-        self.driver.find_element_by_xpath(
-            '/html/body/div[1]/section/main/div/header/section/ul/li[2]/a'
-        ).click()
-        sleep(1.5)
-
-        self.driver.execute_script('''
-            followers = document.getElementsByClassName('isgrP')[0];
-        ''')
-
-        previous_height = self.driver.execute_script(
-            'return followers.scrollHeight')
         while True:
-            self.driver.execute_script('''
-                followers.scrollTo(0, followers.scrollHeight)
-            ''')
-            sleep(1)
-            new_height = self.driver.execute_script('''
-                return followers.scrollHeight
-            ''')
-            if new_height == previous_height:
+            try:
+                self.driver.find_element_by_xpath(
+                    '//*[@id="react-root"]/section/main/div/article/main/button').click()
+                sleep(0.5)
+            except:
                 break
-            previous_height = new_height
 
-        sleep(1)
+        divs = self.driver.find_elements_by_class_name('-utLf')
 
-        li = self.driver.find_element_by_class_name('PZuss')
-
-        items = li.find_elements_by_tag_name('li')
-
-        for li_item in items:
-            name_div = li_item.find_elements_by_tag_name('a')
-            if len(name_div) > 1:
-                name = name_div[1].get_attribute('innerHTML')
-                if name not in self.all_followers:
-                    self.all_followers[name] = True
+        for div in divs:
+            name = div.get_attribute('innerHTML')
+            if name not in self.all_followers:
+                self.all_followers[name] = True
 
         self.total_followers = len(self.all_followers)
 
@@ -182,10 +139,8 @@ class InstagramInfo():
             if follower not in self.all_followings:
                 print(f'you are not following {follower} back')
 
+
 instagram_info = InstagramInfo()
 instagram_info.login(os.environ.get('USER_NAME'), os.environ.get('PASSWORD'))
 instagram_info.analyze()
 instagram_info.not_following_back()
-
-
-
