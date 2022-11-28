@@ -81,49 +81,44 @@ class InstagramInfo():
         except:
             return False
 
+    def scroll_to_bottom(self, target_class_name):
+        before_scroll_window_height = -2 
+        after_scroll_window_height = -1
+
+        while before_scroll_window_height != after_scroll_window_height:
+            before_scroll_window_height = self.driver.execute_script(f'return document.getElementsByClassName("{target_class_name}")[0].scrollHeight')
+            self.driver.execute_script(f'''
+            target_window = document.getElementsByClassName("{target_class_name}")[0];
+            window_scroll_height = target_window.scrollHeight;
+            target_window.scrollTo(0, window_scroll_height);
+            ''')
+            sleep(0.5)
+            after_scroll_window_height = self.driver.execute_script(f'return document.getElementsByClassName("{target_class_name}")[0].scrollHeight')
+    
     def followings(self):
+        
+        self.driver.get('https://www.instagram.com/piyu5hkumar/following/')
+        sleep(5)
+        
+        self.scroll_to_bottom(target_class_name='_aano')
 
-        self.driver.get('https://www.instagram.com/accounts/access_tool/accounts_you_follow')
-
-        tries = 0
-        while True:
-            try:
-                # breakpoint()
-                self.driver.find_element_by_xpath(
-                    '//*[@id="react-root"]/section/main/div/article/main/button').click()
-                sleep(0.5)
-            except Exception as e:
-                tries += 1
-                sleep(2)
-                if tries == 15:
-                    break
-                
-
-        divs = self.driver.find_elements_by_class_name('-utLf')
+        divs = self.driver.find_elements_by_class_name('_ab8y._ab94._ab97._ab9f._ab9k._ab9p._abcm')
 
         for div in divs:
             name = div.get_attribute('innerHTML')
             self.all_followings.add(name)
-
+        
         self.total_followings = len(self.all_followings)
 
 
     def followers(self):
 
-        self.driver.get('https://www.instagram.com/accounts/access_tool/accounts_following_you')
-        tries = 0
-        while True:
-            try:
-                self.driver.find_element_by_xpath(
-                    '//*[@id="react-root"]/section/main/div/article/main/button').click()
-                sleep(0.5)
-            except:
-                tries += 1
-                sleep(2)
-                if tries == 15:
-                    break
+        self.driver.get('https://www.instagram.com/piyu5hkumar/followers/')
+        sleep(5)
+        
+        self.scroll_to_bottom(target_class_name='_aano')
 
-        divs = self.driver.find_elements_by_class_name('-utLf')
+        divs = self.driver.find_elements_by_class_name('_ab8y._ab94._ab97._ab9f._ab9k._ab9p._abcm')
 
         for div in divs:
             name = div.get_attribute('innerHTML')
@@ -159,6 +154,8 @@ class InstagramInfo():
                     '//*[@id="react-root"]/section/main/div/article/form/div[10]/div/div/button').click()
         
         # current_bio_element_clicked
+
+        
 instagram_info = InstagramInfo()
 instagram_info.login(os.environ.get('USER_NAME'), os.environ.get('PASSWORD'))
 # instagram_info.analyze()
