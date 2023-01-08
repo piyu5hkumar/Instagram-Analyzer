@@ -6,6 +6,7 @@ from pathlib import Path
 import os
 import dotenv
 from selenium.webdriver.common.keys import Keys
+import threading
 
 
 dotenv_file = os.path.join(Path(__file__).resolve().parent, '.env')
@@ -125,51 +126,34 @@ class InstagramInfo():
             self.all_followers.add(name)
 
         self.total_followers = len(self.all_followers)
+    
+    def close(self):
+        self.driver.close()
 
-    def analyze(self):
-        self.driver.get('https://www.instagram.com/accounts/edit/')
-        current_bio_element = self.driver.find_element_by_xpath(
-                    '//*[@id="pepBio"]')
-        sleep(2)
-        'current hour is ='
-        'I am updating it every hour :)'
-        current_bio = current_bio_element.get_attribute('innerHTML')
 
-        before_time_part, after_time_part = current_bio.split('~')
+instagram_info_followings = InstagramInfo()
+instagram_info_followings.login(os.environ.get('USER_NAME'), os.environ.get('PASSWORD'))
+followings_thread = threading.Thread(target=instagram_info_followings.followings)
+followings_thread.start()
 
-        import pytz
-        from datetime import datetime
-        tz = pytz.timezone('Asia/Kolkata')
-        india_now = datetime.now(tz)
-        india_now_hour_with_am_pm = india_now.strftime('%I %p')
+instagram_info_followers = InstagramInfo()
+instagram_info_followers.login(os.environ.get('USER_NAME'), os.environ.get('PASSWORD'))
+followers_thread = threading.Thread(target=instagram_info_followers.followers(), args=[6, 100, 'second_thread'])
+followers_thread.start()
 
-        new_bio = before_time_part + india_now_hour_with_am_pm + after_time_part
+followings_thread.join()
+followers_thread.join()
 
-        current_bio_element.send_keys(Keys.CONTROL, 'a')
-        current_bio_element.send_keys(Keys.BACK_SPACE)
-        current_bio_element.send_keys(new_bio)
+instagram_info_followings.close()
+instagram_info_followers.close()
 
-        sleep(1)
-        self.driver.find_element_by_xpath(
-                    '//*[@id="react-root"]/section/main/div/article/form/div[10]/div/div/button').click()
-        
-        # current_bio_element_clicked
-
-        
-instagram_info = InstagramInfo()
-instagram_info.login(os.environ.get('USER_NAME'), os.environ.get('PASSWORD'))
-# instagram_info.analyze()
-instagram_info.followings()
-instagram_info.followers()
-# print(instagram_info.all_followers)
-# print(instagram_info.all_followings)
-not_following_back = instagram_info.all_followings - instagram_info.all_followers
+not_following_back = instagram_info_followings.all_followings - instagram_info_followers.all_followers
 
 print('not following back - ')
 for follow in not_following_back:
     print(follow)
 
 print('\nI am not following back - ')
-m_not_following_back =  instagram_info.all_followers - instagram_info.all_followings
+m_not_following_back =  instagram_info_followers.all_followers - instagram_info_followings.all_followings
 for follow in m_not_following_back:
     print(follow)
