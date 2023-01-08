@@ -80,6 +80,18 @@ class InstagramInfo():
                 self.driver.add_cookie(cookie)
 
         except:
+            print(
+                'heeeeeeeere'
+            )
+            print(
+                'heeeeeeeere'
+            )
+            print(
+                'heeeeeeeere'
+            )
+            print(
+                'heeeeeeeere'
+            )
             return False
 
     def scroll_to_bottom(self, target_class_name):
@@ -132,13 +144,19 @@ class InstagramInfo():
 
 
 instagram_info_followings = InstagramInfo()
-instagram_info_followings.login(os.environ.get('USER_NAME'), os.environ.get('PASSWORD'))
+instagram_info_followings_thread_login = threading.Thread(target=instagram_info_followings.login, args=[os.environ.get('USER_NAME'), os.environ.get('PASSWORD')])
+instagram_info_followings_thread_login.start()
+
+instagram_info_followers = InstagramInfo()
+instagram_info_followers_thread_login = threading.Thread(target=instagram_info_followers.login, args=[os.environ.get('USER_NAME'), os.environ.get('PASSWORD')])
+instagram_info_followers_thread_login.start()
+
+instagram_info_followings_thread_login.join()
 followings_thread = threading.Thread(target=instagram_info_followings.followings)
 followings_thread.start()
 
-instagram_info_followers = InstagramInfo()
-instagram_info_followers.login(os.environ.get('USER_NAME'), os.environ.get('PASSWORD'))
-followers_thread = threading.Thread(target=instagram_info_followers.followers(), args=[6, 100, 'second_thread'])
+instagram_info_followers_thread_login.join()
+followers_thread = threading.Thread(target=instagram_info_followers.followers)
 followers_thread.start()
 
 followings_thread.join()
