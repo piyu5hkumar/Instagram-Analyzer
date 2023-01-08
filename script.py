@@ -80,18 +80,6 @@ class InstagramInfo():
                 self.driver.add_cookie(cookie)
 
         except:
-            print(
-                'heeeeeeeere'
-            )
-            print(
-                'heeeeeeeere'
-            )
-            print(
-                'heeeeeeeere'
-            )
-            print(
-                'heeeeeeeere'
-            )
             return False
 
     def scroll_to_bottom(self, target_class_name):
