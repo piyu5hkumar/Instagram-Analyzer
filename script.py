@@ -93,7 +93,7 @@ class InstagramInfo():
             window_scroll_height = target_window.scrollHeight;
             target_window.scrollTo(0, window_scroll_height);
             ''')
-            sleep(0.5)
+            sleep(1)
             after_scroll_window_height = self.driver.execute_script(f'return document.getElementsByClassName("{target_class_name}")[0].scrollHeight')
     
     def followings(self):
