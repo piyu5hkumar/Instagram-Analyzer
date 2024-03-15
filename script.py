@@ -47,7 +47,7 @@ class InstagramInfo():
             self.driver.find_element_by_xpath('//input[@name = \"username\"]').send_keys(username)
             self.driver.find_element_by_xpath('//input[@name = \"password\"]').send_keys(password)
             self.driver.find_element_by_xpath('//button[@type = \"submit\"]').click()
-            sleep(5)
+            sleep(20)
 
             self.save_cookies()
 
@@ -93,7 +93,7 @@ class InstagramInfo():
             window_scroll_height = target_window.scrollHeight;
             target_window.scrollTo(0, window_scroll_height);
             ''')
-            sleep(1)
+            sleep(2)
             after_scroll_window_height = self.driver.execute_script(f'return document.getElementsByClassName("{target_class_name}")[0].scrollHeight')
     
     def followings(self):
@@ -102,8 +102,7 @@ class InstagramInfo():
         sleep(5)
         
         self.scroll_to_bottom(target_class_name='_aano')
-
-        divs = self.driver.find_elements_by_class_name('_ab8y._ab94._ab97._ab9f._ab9k._ab9p._abcm')
+        divs = self.driver.find_elements_by_class_name('_ap3a._aaco._aacw._aacx._aad7._aade')
 
         for div in divs:
             name = div.get_attribute('innerHTML')
@@ -119,7 +118,7 @@ class InstagramInfo():
         
         self.scroll_to_bottom(target_class_name='_aano')
 
-        divs = self.driver.find_elements_by_class_name('_ab8y._ab94._ab97._ab9f._ab9k._ab9p._abcm')
+        divs = self.driver.find_elements_by_class_name('_ap3a._aaco._aacw._aacx._aad7._aade')
 
         for div in divs:
             name = div.get_attribute('innerHTML')
@@ -131,35 +130,45 @@ class InstagramInfo():
         self.driver.close()
 
 
-instagram_info_followings = InstagramInfo()
-instagram_info_followings_thread_login = threading.Thread(target=instagram_info_followings.login, args=[os.environ.get('USER_NAME'), os.environ.get('PASSWORD')])
-instagram_info_followings_thread_login.start()
+# instagram_info_followings = InstagramInfo()
+# instagram_info_followings_thread_login = threading.Thread(target=instagram_info_followings.login, args=[os.environ.get('USER_NAME'), os.environ.get('PASSWORD')])
+# instagram_info_followings_thread_login.start()
 
-instagram_info_followers = InstagramInfo()
-instagram_info_followers_thread_login = threading.Thread(target=instagram_info_followers.login, args=[os.environ.get('USER_NAME'), os.environ.get('PASSWORD')])
-instagram_info_followers_thread_login.start()
+# instagram_info_followers = InstagramInfo()
+# instagram_info_followers_thread_login = threading.Thread(target=instagram_info_followers.login, args=[os.environ.get('USER_NAME'), os.environ.get('PASSWORD')])
+# instagram_info_followers_thread_login.start()
 
-instagram_info_followings_thread_login.join()
-followings_thread = threading.Thread(target=instagram_info_followings.followings)
-followings_thread.start()
+# instagram_info_followings_thread_login.join()
+# followings_thread = threading.Thread(target=instagram_info_followings.followings)
+# followings_thread.start()
 
-instagram_info_followers_thread_login.join()
-followers_thread = threading.Thread(target=instagram_info_followers.followers)
-followers_thread.start()
+# instagram_info_followers_thread_login.join()
+# followers_thread = threading.Thread(target=instagram_info_followers.followers)
+# followers_thread.start()
 
-followings_thread.join()
-followers_thread.join()
+# followings_thread.join()
+# followers_thread.join()
 
-instagram_info_followings.close()
-instagram_info_followers.close()
+# instagram_info_followings.close()
+# instagram_info_followers.close()
 
-not_following_back = instagram_info_followings.all_followings - instagram_info_followers.all_followers
 
-print('not following back - ')
+instagram_info = InstagramInfo(headless=True)
+instagram_info.login(os.environ.get('USER_NAME'), os.environ.get('PASSWORD'))
+instagram_info.followings()
+instagram_info.followers()
+instagram_info.close()
+
+not_following_back = instagram_info.all_followings - instagram_info.all_followers
+
+print(f"{instagram_info.all_followings = }")
+print(f"\n\n{instagram_info.all_followers = }")
+
+print('\n\nnot following back - ')
 for follow in not_following_back:
     print(follow)
 
 print('\nI am not following back - ')
-m_not_following_back =  instagram_info_followers.all_followers - instagram_info_followings.all_followings
+m_not_following_back =  instagram_info.all_followers - instagram_info.all_followings
 for follow in m_not_following_back:
     print(follow)
