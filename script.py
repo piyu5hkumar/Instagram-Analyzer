@@ -101,7 +101,10 @@ class InstagramInfo():
         self.driver.get('https://www.instagram.com/piyu5hkumar/following/')
         sleep(5)
         
-        self.scroll_to_bottom(target_class_name='_aano')
+        self.driver.find_element_by_xpath('/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div[2]/div/div[1]/section/main/div/header/section[3]/ul/li[3]/div/a').click()
+        sleep(5)
+
+        self.scroll_to_bottom(target_class_name='xyi19xy')
         divs = self.driver.find_elements_by_class_name('_ap3a._aaco._aacw._aacx._aad7._aade')
 
         for div in divs:
@@ -116,7 +119,10 @@ class InstagramInfo():
         self.driver.get('https://www.instagram.com/piyu5hkumar/followers/')
         sleep(5)
         
-        self.scroll_to_bottom(target_class_name='_aano')
+        self.driver.find_element_by_xpath('/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div[2]/div/div[1]/section/main/div/header/section[3]/ul/li[2]/div/a').click()
+        sleep(5)
+
+        self.scroll_to_bottom(target_class_name='xyi19xy')
 
         divs = self.driver.find_elements_by_class_name('_ap3a._aaco._aacw._aacx._aad7._aade')
 
